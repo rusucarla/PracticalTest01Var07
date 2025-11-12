@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Butonul Set -->
+    <Button
+        android:id="@+id/btnSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center" />
+
+    <!-- Grila 2x2 -->
+    <GridLayout
+        android:id="@+id/gridInputs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alignmentMode="alignMargins"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:columnOrderPreserved="false"
+        android:layout_gravity="center"
+        android:rowOrderPreserved="false"
+        android:layout_marginBottom="20dp">
+
+        <EditText
+            android:id="@+id/edit1"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:hint="Num 1"
+            android:inputType="number"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/edit2"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:hint="Num 2"
+            android:inputType="number"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/edit3"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:hint="Num 3"
+            android:inputType="number"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/edit4"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:hint="Num 4"
+            android:inputType="number"
+            android:gravity="center" />
+    </GridLayout>
+
+    <!-- Butonul Random -->
+    <Button
+        android:id="@+id/btnRandom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Random"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center" />
+
+    <!-- Rezultatul -->
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center" />
+
+</LinearLayout>
