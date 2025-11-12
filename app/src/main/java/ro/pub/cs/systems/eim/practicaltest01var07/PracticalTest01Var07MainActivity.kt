@@ -10,14 +10,15 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Context
-
+import ro.pub.cs.systems.eim.practicaltest01var07.Constants.action
 
 class PracticalTest01Var07MainActivity : AppCompatActivity() {
 
     private lateinit var edits: List<EditText>
     private lateinit var resultText: TextView
     private lateinit var setButton: Button
+
+    private lateinit var randomButton: Button
     private lateinit var receiver: BroadcastReceiver
     private lateinit var intentFilter: IntentFilter
 
@@ -27,7 +28,10 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
-                val result = it.data?.getIntExtra("result", 0) ?: 0
+                // need to check both extras
+                val resultS = it.data?.getIntExtra("resultS", 0) ?: 0
+                val resultP = it.data?.getIntExtra("resultP", 0) ?: 0
+                val result = if (resultS != 0) resultS.also{sum = resultS} else resultP.also{product = resultP}
                 Toast.makeText(this, "Received result: $result", Toast.LENGTH_SHORT).show()
                 resultText.text = "Result: $result"
             }
@@ -45,8 +49,20 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
         )
 
         setButton = findViewById(R.id.btnSet)
+        randomButton = findViewById(R.id.btnRandom)
         resultText = findViewById(R.id.resultText)
 
+        // random button for generating random number (<= 10)
+        randomButton.setOnClickListener {
+            for (edit in edits) {
+                if (edit.text.toString().isEmpty() || edit.text.toString().toIntOrNull() == null) {
+                    val randomValue = (0..10).random()
+                    edit.setText(randomValue.toString())
+                }
+            }
+        }
+
+        // set for numbers and go to 2nd activity
         setButton.setOnClickListener {
             val values = edits.map { it.text.toString() }
 
@@ -66,29 +82,13 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
             launcher.launch(intent)
         }
 
-        // Start serviciu
-        startService(Intent(this, PracticalTest01Var07Service::class.java))
-
         // Receiver pentru broadcast-uri
-        intentFilter = IntentFilter("ro.pub.cs.systems.eim.practicaltest01var07.action")
-        receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val n1 = intent?.getIntExtra("n1", 0)
-                val n2 = intent?.getIntExtra("n2", 0)
-                val n3 = intent?.getIntExtra("n3", 0)
-                val n4 = intent?.getIntExtra("n4", 0)
+        intentFilter = IntentFilter(action)
+        receiver = PracticalTest01Var07BroadcastReceiver(edits)
 
-                Log.d("Receiver", "Received randoms: $n1, $n2, $n3, $n4")
-
-                // suprascrie câmpurile
-                edits[0].setText(n1.toString())
-                edits[1].setText(n2.toString())
-                edits[2].setText(n3.toString())
-                edits[3].setText(n4.toString())
-            }
-        }
-//        receiver = PracticalTest01Var07BroadcastReceiver()
-//        intentFilter = IntentFilter("ro.pub.cs.systems.eim.practicaltest01var07.action")
+        // Start serviciu
+        Log.d("MainActivity", "Starting service")
+        startService(Intent(this, PracticalTest01Var07Service::class.java))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -103,12 +103,14 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        Log.d("onDestroy", "Stopping service")
         stopService(Intent(this, PracticalTest01Var07Service::class.java))
         super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        Log.d("onSaveInstanceState", "Saved: num=$sum product=$product")
         outState.putInt("sum", sum)
         outState.putInt("product", product)
     }
@@ -117,6 +119,7 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         sum = savedInstanceState.getInt("sum")
         product = savedInstanceState.getInt("product")
-        resultText.text = "Sum=$sum Product=$product"
+        resultText.text = "Sum=$sum\nProduct=$product"
+        Log.d("onRestoreInstanceState", "$resultText.text")
     }
 }

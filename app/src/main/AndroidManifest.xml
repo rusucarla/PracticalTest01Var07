@@ -22,7 +22,7 @@
         </activity>
         <activity
             android:name=".PracticalTest01Var07SecondaryActivity"
-            android:exported="false" />
+            android:exported="true" />
         <service
             android:name=".PracticalTest01Var07Service"
             android:exported="true" />
